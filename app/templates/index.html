@@ -1,0 +1,52 @@
+{% extends "base.html" %}
+{% block title %}Welcome{% endblock %}
+{% block content %}
+<div class="container">
+    <div class="row min-vh-75 align-items-center">
+        <div class="col-lg-6 slide-right">
+            <h1 class="display-4 fw-bold" style="color: var(--mzb-green);">
+                Build in Public.
+                <br>Grow Together.
+            </h1>
+            <p class="lead mt-3">Join South Africa's developer community where you showcase your journey, get support, and celebrate wins.</p>
+            {% if not current_user.is_authenticated %}
+                <div class="mt-4">
+                    <a href="{{ url_for('auth.register') }}" class="btn btn-mzb-primary btn-lg me-3">
+                        <i class="fas fa-rocket"></i> Start Building
+                    </a>
+                    <a href="{{ url_for('auth.login') }}" class="btn btn-mzb-outline btn-lg">
+                        <i class="fas fa-sign-in-alt"></i> Login
+                    </a>
+                </div>
+            {% else %}
+                <div class="mt-4">
+                    <a href="{{ url_for('projects.dashboard') }}" class="btn btn-mzb-primary btn-lg">
+                        <i class="fas fa-tachometer-alt"></i> Go to Dashboard
+                    </a>
+                </div>
+            {% endif %}
+        </div>
+        <div class="col-lg-6 text-center slide-up">
+            <i class="fas fa-laptop-code" style="font-size: 250px; color: var(--mzb-green-light); opacity: 0.8;"></i>
+        </div>
+    </div>
+    
+    <div class="row text-center mt-5 pt-5">
+        <div class="col-md-4 fade-in" style="animation-delay: 0.1s;">
+            <i class="fas fa-project-diagram fa-3x" style="color: var(--mzb-green);"></i>
+            <h4 class="mt-3">Share Projects</h4>
+            <p>Document your journey from idea to completion</p>
+        </div>
+        <div class="col-md-4 fade-in" style="animation-delay: 0.2s;">
+            <i class="fas fa-users fa-3x" style="color: var(--mzb-green);"></i>
+            <h4 class="mt-3">Get Support</h4>
+            <p>Raise your hand and collaborate with peers</p>
+        </div>
+        <div class="col-md-4 fade-in" style="animation-delay: 0.3s;">
+            <i class="fas fa-chart-line fa-3x" style="color: var(--mzb-green);"></i>
+            <h4 class="mt-3">Celebrate Wins</h4>
+            <p>Get featured on the Celebration Wall</p>
+        </div>
+    </div>
+</div>
+{% endblock %}

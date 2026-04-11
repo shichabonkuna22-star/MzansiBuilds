@@ -1,0 +1,78 @@
+{% extends "base.html" %}
+{% block title %}Collaboration Requests{% endblock %}
+{% block content %}
+<div class="container">
+    <h2 class="mb-4 slide-up">
+        <i class="fas fa-hand-peace" style="color: var(--mzb-green);"></i> Collaboration Requests
+        {% if requests %}
+            <span class="badge bg-warning ms-2">{{ requests|selectattr('status', 'equalto', 'pending')|list|length }} pending</span>
+        {% endif %}
+    </h2>
+    
+    {% if requests %}
+        <div class="row">
+            {% for req in requests %}
+                <div class="col-md-6 mb-3 slide-up">
+                    <div class="card {% if req.status == 'pending' %}border-warning{% elif req.status == 'accepted' %}border-success{% else %}border-secondary{% endif %}">
+                        <div class="card-body">
+                            <div class="d-flex align-items-center justify-content-between mb-2">
+                                <div class="d-flex align-items-center">
+                                    <img src="{{ req.requester.get_profile_image_url() }}" class="profile-img me-2" style="width: 40px; height: 40px;">
+                                    <div>
+                                        <strong>{{ req.requester.username }}</strong>
+                                        <small class="text-muted d-block">wants to collaborate on</small>
+                                    </div>
+                                </div>
+                                <span class="badge {% if req.status == 'pending' %}bg-warning{% elif req.status == 'accepted' %}bg-success{% else %}bg-secondary{% endif %}">
+                                    {{ req.status|upper }}
+                                </span>
+                            </div>
+                            <h5 class="mt-2">{{ req.project.title }}</h5>
+                            <p class="small text-muted">Requested: {{ req.created_at.strftime('%d %b %Y at %H:%M') }} SAST</p>
+                            {% if req.message %}
+                                <div class="alert alert-light mt-2 mb-2">
+                                    <i class="fas fa-quote-left me-1"></i> {{ req.message }}
+                                </div>
+                            {% endif %}
+                            
+                            {% if req.status == 'pending' %}
+                                <div class="mt-3">
+                                    <form method="POST" action="{{ url_for('feed.respond_to_request', request_id=req.id) }}" class="d-inline">
+                                        <input type="hidden" name="action" value="accept">
+                                        <button type="submit" class="btn btn-success btn-sm" onclick="return confirm('Accept {{ req.requester.username }}\'s request?')">
+                                            <i class="fas fa-check"></i> Accept
+                                        </button>
+                                    </form>
+                                    <form method="POST" action="{{ url_for('feed.respond_to_request', request_id=req.id) }}" class="d-inline ms-2">
+                                        <input type="hidden" name="action" value="reject">
+                                        <button type="submit" class="btn btn-danger btn-sm" onclick="return confirm('Decline {{ req.requester.username }}\'s request?')">
+                                            <i class="fas fa-times"></i> Decline
+                                        </button>
+                                    </form>
+                                </div>
+                            {% elif req.status == 'accepted' %}
+                                <div class="alert alert-success mt-3 mb-0 py-2">
+                                    <i class="fas fa-handshake"></i> <strong>Collaboration accepted!</strong> You can now work together.
+                                </div>
+                            {% else %}
+                                <div class="alert alert-secondary mt-3 mb-0 py-2">
+                                    <i class="fas fa-times-circle"></i> Request declined
+                                </div>
+                            {% endif %}
+                        </div>
+                    </div>
+                </div>
+            {% endfor %}
+        </div>
+    {% else %}
+        <div class="text-center py-5 slide-up">
+            <i class="fas fa-inbox" style="font-size: 64px; color: var(--mzb-gray-dark);"></i>
+            <h4 class="mt-3">No collaboration requests yet</h4>
+            <p>When someone requests to collaborate on your projects, they'll appear here.</p>
+            <a href="{{ url_for('projects.create_project') }}" class="btn btn-mzb-primary mt-2">
+                <i class="fas fa-plus"></i> Create a Project
+            </a>
+        </div>
+    {% endif %}
+</div>
+{% endblock %}

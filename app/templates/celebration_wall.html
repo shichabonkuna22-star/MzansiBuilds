@@ -1,0 +1,52 @@
+{% extends "base.html" %}
+{% block title %}Celebration Wall 🏆{% endblock %}
+{% block content %}
+<div class="container">
+    <div class="text-center mb-5 slide-up">
+        <i class="fas fa-trophy" style="font-size: 64px; color: var(--mzb-green);"></i>
+        <h1 class="display-5 fw-bold">Celebration Wall</h1>
+        <p class="lead">Developers who completed their public building journey</p>
+    </div>
+    
+    {% if projects %}
+        <div class="row">
+            {% for project in projects %}
+                <div class="col-md-6 col-lg-4 mb-4">
+                    <div class="celebration-card slide-up" style="animation-delay: {{ loop.index * 0.1 }}s;">
+                        <div class="celebration-emoji">
+                            {% if loop.index0 % 3 == 0 %}🎉{% elif loop.index0 % 3 == 1 %}🏆{% else %}🚀{% endif %}
+                        </div>
+                        <h4 class="mt-2">{{ project.title }}</h4>
+                        <p class="text-muted">by {{ project.owner.username }}</p>
+                        <div class="mt-2">
+                            <span class="badge bg-success">Completed</span>
+                            <small class="text-muted d-block mt-2">
+                                <i class="fas fa-calendar-check"></i> {{ project.completed_at.strftime('%d %b %Y') }}
+                            </small>
+                        </div>
+                        <a href="{{ url_for('projects.view_project', project_id=project.id) }}" class="btn btn-mzb-outline btn-sm mt-3">
+                            View Journey <i class="fas fa-arrow-right"></i>
+                        </a>
+                    </div>
+                </div>
+            {% endfor %}
+        </div>
+    {% else %}
+        <div class="text-center py-5 slide-up">
+            <i class="fas fa-hourglass-half" style="font-size: 64px; color: var(--mzb-gray-dark);"></i>
+            <h4 class="mt-3">No completed projects yet</h4>
+            <p>Be the first to complete a project and get celebrated!</p>
+            <a href="{{ url_for('projects.create_project') }}" class="btn btn-mzb-primary">Start Building</a>
+        </div>
+    {% endif %}
+</div>
+
+<script>
+    // Trigger confetti when page loads if there are completed projects
+    document.addEventListener('DOMContentLoaded', function() {
+        {% if projects %}
+            triggerConfetti();
+        {% endif %}
+    });
+</script>
+{% endblock %}

@@ -1,0 +1,62 @@
+{% extends "base.html" %}
+{% block title %}Dashboard{% endblock %}
+{% block content %}
+<div class="container">
+    <div class="d-flex justify-content-between align-items-center mb-4 slide-up">
+        <h2><i class="fas fa-tachometer-alt me-2" style="color: var(--mzb-green);"></i>My Dashboard</h2>
+        <a href="{{ url_for('projects.create_project') }}" class="btn btn-mzb-primary">
+            <i class="fas fa-plus"></i> New Project
+        </a>
+    </div>
+    
+    {% if projects %}
+        <div class="row">
+            {% for project in projects %}
+                <div class="col-md-6 col-lg-4 mb-4 slide-up" style="animation-delay: {{ loop.index * 0.05 }}s;">
+                    <div class="card h-100">
+                        <div class="card-body">
+                            <span class="stage-badge stage-{{ project.stage }} mb-2">{{ project.get_stage_display() }}</span>
+                            <h5 class="card-title">{{ project.title }}</h5>
+                            <p class="card-text text-muted">{{ project.description[:100] }}{% if project.description|length > 100 %}...{% endif %}</p>
+                            {% if project.support_needed %}
+                                <span class="badge bg-warning text-dark mb-2">
+                                    <i class="fas fa-hand-peace"></i> {{ project.get_support_display() }}
+                                </span>
+                            {% endif %}
+                            <div class="mt-3">
+                                <a href="{{ url_for('projects.view_project', project_id=project.id) }}" class="btn btn-mzb-outline btn-sm">
+                                    <i class="fas fa-eye"></i> View
+                                </a>
+                                {% if not project.is_completed %}
+                                    <form method="POST" action="{{ url_for('projects.complete_project', project_id=project.id) }}" class="d-inline">
+                                        <button type="submit" class="btn btn-success btn-sm" onclick="return confirm('Mark as complete?')">
+                                            <i class="fas fa-check"></i> Complete
+                                        </button>
+                                    </form>
+                                {% endif %}
+                            </div>
+                        </div>
+                        <div class="card-footer bg-transparent">
+                            <small class="text-muted">
+                                <i class="fas fa-calendar"></i> {{ project.created_at.strftime('%d %b %Y') }}
+                                {% if project.milestones.count() > 0 %}
+                                    | <i class="fas fa-check-circle"></i> {{ project.milestones.count() }} milestones
+                                {% endif %}
+                            </small>
+                        </div>
+                    </div>
+                </div>
+            {% endfor %}
+        </div>
+    {% else %}
+        <div class="text-center py-5 slide-up">
+            <i class="fas fa-folder-open" style="font-size: 64px; color: var(--mzb-gray-dark);"></i>
+            <h4 class="mt-3">No projects yet</h4>
+            <p>Start your building journey by creating your first project!</p>
+            <a href="{{ url_for('projects.create_project') }}" class="btn btn-mzb-primary">
+                <i class="fas fa-plus"></i> Create First Project
+            </a>
+        </div>
+    {% endif %}
+</div>
+{% endblock %}
